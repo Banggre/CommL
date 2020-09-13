@@ -1,6 +1,7 @@
 const makeAttribute = (data) => {
     delete data.children
     delete data.component
+    delete data.selected
     return Object.keys(data).map(key => ` ${key} = ${data[key]} `)
 }
 // children, component는 속성이 아니기 때문에 키 값을 제거해줍니다.
@@ -21,11 +22,9 @@ const img = (data) => {
 }
 
 const select = (data) => {
-    let { children } = data
+    let {children=[], selected=children[0]} = data
     const attribute = makeAttribute(data)
-    children = children.map(element => `<option ${element}>${element}</option>`)
-                                 .reduce((acc,val) => acc += val, '');
-    children = `<option ${selected} selected="selected">${selected}</option>` + children;
+    children = children.map(element => `<option value=${element} ${element===selected?'selected':''}>${element}</option>`).join('')
     return `<select ${attribute}> ${children} </select>`;
 }
 
