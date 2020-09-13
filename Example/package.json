@@ -1,0 +1,32 @@
+{
+  "name": "comml",
+  "version": "0.0.1",
+  "description": "this app is airbnb_clone app which provides only static resource",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "author": "Yoloriyolo",
+  "license": "ISC",
+  "dependencies": {
+    "cookie-parser": "^1.4.5",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4",
+    "morgan": "^1.10.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yoloriyolo/CommL.git"
+  },
+  "keywords": [
+    "HTML",
+    "JS",
+    "vanilaJS"
+  ],
+  "bugs": {
+    "url": "https://github.com/Yoloriyolo/CommL/issues"
+  },
+  "homepage": "https://github.com/Yoloriyolo/CommL#readme"
+}
