@@ -1,4 +1,4 @@
-const middleware = (data) => {
+const makeAttribute = (data) => {
     delete data.children
     delete data.component
     return Object.keys(data).map(key => ` ${key} = ${data[key]} `)
@@ -8,21 +8,21 @@ const middleware = (data) => {
 // 아래 예시 참고..
 
 const input = (data) => {
-    return `<input ${middleware(data)}>`;
+    return `<input ${makeAttribute(data)}>`;
 }
 
 const button = (data) => {
     const { value } = data
-    return `<button ${middleware(data)}> ${value} </button>`;
+    return `<button ${makeAttribute(data)}> ${value} </button>`;
 }
 
 const img = (data) => {
-    return `<img ${middleware(data)}>`;
+    return `<img ${makeAttribute(data)}>`;
 }
 
 const select = (data) => {
     let { children } = data
-    const attribute = middleware(data)
+    const attribute = makeAttribute(data)
     children = children.map(element => `<option ${element}>${element}</option>`)
                                  .reduce((acc,val) => acc += val, '');
     children = `<option ${selected} selected="selected">${selected}</option>` + children;
@@ -31,7 +31,7 @@ const select = (data) => {
 
 const form = (data) => {
     let {children=''} = data
-    const attribute = middleware(data)
+    const attribute = makeAttribute(data)
     let contents = `<form ${attribute}> ${children} </form>`;
     const setContents = (...child) => {
         children += child.reduce((acc,val) => acc += val,'');
@@ -45,7 +45,7 @@ const form = (data) => {
 
 const header = (data) => {
     let {children=''} = data
-    const attribute = middleware(data)
+    const attribute = makeAttribute(data)
     console.log('header', attribute);
     let contents = `<header ${attribute}> ${children} </header>`;
 
@@ -61,7 +61,7 @@ const header = (data) => {
 
 const div = (data) => {
     let {children=''} = data
-    const attribute = middleware(data)
+    const attribute = makeAttribute(data)
     let contents = `<div${attribute}>${children}</div>`;
 
     const setContents = (...child) => {
@@ -76,7 +76,7 @@ const div = (data) => {
 
 const component = (data) => {
     let {component, children=''} = data
-    const attribute = middleware(data)
+    const attribute = makeAttribute(data)
     let contents = `<${component}${attribute}>${children}</${component}>`;
 
     const setContents = (...child) => {
