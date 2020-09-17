@@ -6,10 +6,6 @@ const home = (data) => {
     const [header, setHeader] = comp({tag:'header',atr : {class:'header'}});
     const [title] = comp({tag:'h1', children: 'CommL로 만든 회원가입 창'});
     setHeader(title());
-    // 위 내용은 다음과 같습니다.
-    // <header class=header>
-    //     <h1>CommL로 만든 회원가입 창</h1>
-    // </header>
 
     const [centerBox, setCenterBox] = comp({tag: 'div', atr: {class:'centerBox'}});
     const [signupForm, setSignupForm] = comp({tag: 'form',atr: {class: 'signupForm'}});
