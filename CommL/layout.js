@@ -15,12 +15,12 @@ const importBody = (body) => {
   return result;
 }
 
-const layout = (body, css, js) => 
+const layout = (title, body, css, js) => 
 `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>CommL</title>
+  <title>${title}</title>
   ${importCss(css)}
 </head>
 <body>
