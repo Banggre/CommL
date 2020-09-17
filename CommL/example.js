@@ -3,7 +3,7 @@ const base = require('./base');
 
 const example = (data) => {
 
-    const [layoutBox, setLayoutBox] = base.div({Class: '클래스명'});
+    const [layoutBox, setLayoutBox] = base({tag: 'div', atr:{class: '클래스명'}});
 
     const body = [
         layoutBox(),
@@ -15,7 +15,7 @@ const example = (data) => {
 
     ];
 
-    return layout(body, css, js);
+    return layout('CommL', body, css, js);
 }
 
 module.exports = example;

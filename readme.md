@@ -1,66 +1,82 @@
 # Component HTML
 
-HTML을 컴포넌트화 해서 관리하기 위해 만들었습니다.
+HTML을 **컴포넌트화** 해서 **js**로 관리하기 위해 만들었습니다.
 
-모든 태그들에 대해 구성한 것은 아닙니다.
-필요한 태그가 있다면 base 파일 내 다른 함수를 참고해 추가해서 사용합니다.
-
-<strong>base 내 태그 함수는 두가지 형태가 존재합니다.</strong>
-
-## 1. 태그 내부에 다른 요소가 들어갈 수 있는 것
+## 1. 
 ex) div, form, header...
 위와 같은 태그는 다음과 같은 형태로 사용합니다.
 ```javascript
-    const [layoutBox, setLayoutBox] = base.div({Class: '클래스명'});
-    setLayoutBox('해당 디브에 추가하고자 하는 컴포넌트'); //디브에 컴포넌트를 넣을 때 사용
-    layout(); //디브를 호출
+    const comp = require('./components/base');
+    ...
+    const [header, setHeader] = comp({tag:'header',atr : {class:'header'}}); //header 태그에 속성으로 클래스 네임을 header로 줍니다.
+    const [title] = comp({tag:'h1', children: 'CommL로 만든 회원가입 창'}); //h1 태그에 태그 컨텐츠로 문자열을 넘깁니다.
+    setHeader(title()); // header 컴포넌트의 컨텐츠로 title를 선택합니다.
+    // 위 내용은 다음과 같습니다.
+    // <header class=header>
+    //     <h1>CommL로 만든 회원가입 창</h1>
+    // </header>
 ```
-    base.태그명({넘기고자 하는 속성})
-    속성으로는 Class(class명), id, value, name 등이 있습니다.
-    다른 속성을 추가하고 싶다면 base 내부 태그에 해당하는 함수를 수정해서 사용합니다.
-    base.div는 다음과 같습니다.
+    comp({tag: '태그명', atr: {속성키값 : 속성 벨류값}, children : [담고자 하는 컨텐츠] });
+    속성으로 넘길 때는 class: 'ClassName'과 같이 키 밸류 값으로 넘깁니다.
+    이때, selected와 같이 벨류값이 없는 경우 key와 value로 같은 값을 넘깁니다.
+    children의 경우, 항상 문자열 하나를 넘겨줍니다.
 
 ```javascript
-    const div = (data) => {
-        let{ id, Class, children } = middleware(data);
-        let contents = `<div${id}${Class}>${children}</div>`;
+    const comp = require('./components/base');
+    ...
+    const [firstName] = comp({tag: 'input', atr: {type: 'text', name: 'firstName', placeholder: '"아이디를 입력하세요."'}})
+    const [secondName] = comp({tag: 'input',atr: {type: 'text', name: 'secondName', placeholder: '"아이디를 다시 입력하세요."'}})
+    const [submitButton] = comp({tag: 'input',atr: {type: 'submit', value: '제출'}})
+    const [centerBox, setCenterBox] = comp({tag: 'div', atr: {class:'centerBox'}});
+    const [signupForm, setSignupForm] = comp({tag: 'form',atr: {class: 'signupForm'}, children: firstName()+secondName()+submitButton()});
+
+    setCenterBox(signupForm());
+```
+    주의 : placeholder와 같이 문자열 사이 공백이 있을 때에는 '" "' 로 감싸서 넘겨주세요.
+
+    signupForm의 자식으로 넘겨줄 때 리터럴 하나로 넘겨줘야 하기에 다음과 같이 각 함수의 반환 값을 + 해서 넘겨줍니다.
+    그러나 다음과 같이 하는 set함수를 활용하는 방법을 추천합니다.
+
+```javascript
+    const [centerBox, setCenterBox] = comp({tag: 'div', atr: {class:'centerBox'}});
+    const [signupForm, setSignupForm] = comp({tag: 'form',atr: {class: 'signupForm'}});
+
+    const [firstName] = comp({tag: 'input', atr: {type: 'text', name: 'firstName', placeholder: '"아이디를 입력하세요."'}});
+    const [secondName] = comp({tag: 'input',atr: {type: 'text', name: 'secondName', placeholder: '"아이디를 다시 입력하세요."'}});
+    const [submitButton] = comp({tag: 'input',atr: {type: 'submit', value: '제출'}});
+
+    setSignupForm(firstName(), secondName(), submitButton());
+
+    setCenterBox(signupForm());
+```
+    
+    comp는 다음과 같습니다.
+
+```javascript
+    const component = (data) => {
+        let {tag, atr, children = ''} = data;
+        atr = atr === undefined ? '' :getAttribute(atr);
+        let contents = `<${tag}${atr}>${children}</${tag}>`;
 
         const setContents = (...child) => {
-            children += child.reduce((acc,val) => acc += val,'');
-            contents = `<div${id}${Class}>${children}</div>`;
+            children = child.reduce((acc,val) => acc += val,'');
+            contents = `<${tag}${atr}>${children}</${tag}>`;
+
         }
+
+        const addContents = (...child) => {
+            children += child.reduce((acc,val) => acc += val,'');
+            contents = `<${tag}${atr}>${children}</${tag}>`;
+
+        } 
 
         const getContents = () => contents;
 
-        return [getContents, setContents];
+        return [getContents, setContents, addContents];
     }
 ```
-    리터럴 문자 내부에 속성을 추가하고 미들웨어에서 전처리 단계를 추가해줍니다.
-    미들웨어는,,, 리팩토링이 매우 시급합니다만 조건이 다소 까다로워 조금 시간이 걸릴 것 같습니다...
-    현재는 속성이 추가될 때마다 그냥 미들웨어에 속성을 추가해주고 있습니다.
-    미들웨어의 역할은 속성에 해당하는 값이 있는지 없는 확인하여 있다면 태그내 속성의 형태에 맞게 바꿔주고,
-    없다면 ''을 리턴합니다.
 
-    결과를 호출하는 get함수와 결과에 컴포넌트를 추가하는 set함수를 반환합니다.
-    따라서 결과를 호출하거나, 셋팅할 때는 반드시 "함수를 호출해주어야 합니다."
+    순서대로 get, set, add 함수를 반환합니다.
+    내용을 가져올 때는 get함수를 호출하고, 내용을 덮어 씌울 때는 set함수를, 내용을 추가할 때는 add함수를 사용합니다.
 
-## 2. 태그 내부에 다른 태그가 들어갈 수 없는 것
-ex) input, img, button
-위와 같은 태그들은 다음과 같이 사용합니다.
-
-```javascript
-    const img = base.img({src: image, width:'400px', height:'300px', Class:'feedPicture'});
-
-    const [layoutBox, setLayoutBox] = base.div({Class: '클래스명'});
-    setLayoutBox(img); //디브에 img를 넣을 때
-    layout(); //디브를 호출
-```
-    호출하는 방법과 속성을 설정하는 방법은 1번과 같습니다.
-    차이점은 해당 요소를 사용할 때 함수호출 형태가 아닌 변수의 값을 사용하면 됩니다.
-```javascript
-    const img = (data) => {
-        const { src, width, height, id, Class } = middleware(data);
-        return `<img ${src} ${width} ${height} ${id} ${Class}>`;
-    }
-```
-Example에 예시가 있으니 참고하셔도 좋을 것 같습니다.
+    
